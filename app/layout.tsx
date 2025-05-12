@@ -15,7 +15,6 @@ import { Providers } from "./providers";
 import { siteConfig } from "@/config/site";
 import { fontSans } from "@/config/fonts";
 import { ThemeSwitch } from "@/components/theme-switch";
-import { Button } from "@heroui/button";
 
 export const metadata: Metadata = {
   title: {
@@ -63,7 +62,6 @@ export default function RootLayout({
                 </SignedIn>
               </header>
               <main className="container mx-auto max-w-7xl pt-16 px-16 flex-grow">
-                <div className="w-full justify-end"></div>
                 {children}
               </main>
             </div>

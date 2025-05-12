@@ -1,10 +1,10 @@
 "use server";
 
-import { and, desc, eq, or } from "drizzle-orm";
+import { and, asc, desc, eq, or } from "drizzle-orm";
 
 import { db } from "..";
-import { albumsTable } from "../schema";
-import { Album } from "../types";
+import { albums, memories } from "../schema";
+import { Album, AlbumWithMemories } from "../types";
 import { revalidatePath } from "next/cache";
 import { currentUser } from "@clerk/nextjs/server";
 import { z } from "zod";
@@ -16,43 +16,43 @@ export async function getUserAlbums(
 ): Promise<Album[]> {
   return db
     .select()
-    .from(albumsTable)
-    .orderBy(desc(albumsTable.createdAt))
+    .from(albums)
+    .orderBy(desc(albums.createdAt))
     .limit(perPage)
     .offset((page - 1) * perPage)
-    .where(eq(albumsTable.authorId, authorId));
+    .where(eq(albums.authorId, authorId));
 }
 
-export async function getAlbumById(id: string) {
+export async function getAlbumById(
+  id: string
+): Promise<AlbumWithMemories | undefined> {
   const user = await currentUser();
   const safeId = await z.string().uuid().safeParseAsync(id);
 
   if (!safeId.success) {
-    return null;
+    return undefined;
   }
 
-  const album = await db
-    .select()
-    .from(albumsTable)
-    .where(
-      and(eq(albumsTable.id, safeId.data), eq(albumsTable.authorId, user!.id))
-    )
-    .execute();
+  const album = await db.query.albums.findFirst({
+    where: (_, { eq, and }) =>
+      and(eq(albums.id, safeId.data), eq(albums.authorId, user!.id)),
+    with: {
+      // TODO: Fetching all memories is probably a bad idea
+      memories: {
+        orderBy: desc(memories.date),
+      },
+    },
+  });
 
-  if (album.length === 0) {
-    return null;
-  }
-
-  return album[0];
+  return album;
 }
 
 export async function createAlbum(title: string, authorId: string) {
-  const album = await db
-    .insert(albumsTable)
-    .values({ title, authorId })
-    .returning();
+  const album = await db.insert(albums).values({ title, authorId }).returning();
 
-  revalidatePath("/albums");
+  // TODO: This will revalidate for all users, we need to revalidate for the author only
+  // Maybe prefix all fields with a `[userId]`?
+  revalidatePath("/");
 
   return album[0].id;
 }

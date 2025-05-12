@@ -11,21 +11,13 @@ interface AlbumListItemProps {
 // TODO: implement deletion
 export default function AlbumListItem({ album }: AlbumListItemProps) {
   return (
-    <Card
-      as={Link}
+    <Link
+      color="foreground"
       href={`albums/${album.id}`}
-      className="w-full"
-      radius="sm"
-      isPressable
-      shadow="sm"
-      isHoverable
+      className="flex justify-between items-center gap-2 border-2 bg-default-100 border-default-200 p-4 rounded-xl w-full"
     >
-      <CardBody>
-        <div className="flex justify-between items-center">
-          <p>{album.title}</p>
-          <ChevronRightIcon />
-        </div>
-      </CardBody>
-    </Card>
+      <p>{album.title}</p>
+      <ChevronRightIcon />
+    </Link>
   );
 }
