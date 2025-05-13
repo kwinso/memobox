@@ -16,7 +16,7 @@ export default function MemoriesTimeline({
   onSelectMemory,
 }: MemoryListProps) {
   return (
-    <div className="bg-default-100 flex flex-col gap-4 h-fit border-2 border-default-200 p-4 rounded-xl min-w-72 w-1/5">
+    <div className="bg-default-100 flex flex-col gap-4 h-fit border-2 border-default-200 p-4 rounded-xl min-w-72 md:w-1/5">
       <div className="flex justify-between items-center">
         <h3 className="text-xl font-bold">timeline</h3>
       </div>

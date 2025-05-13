@@ -17,6 +17,8 @@ export default function MemoriesViewSelector() {
 
   return (
     <Tabs
+      fullWidth
+      className="md:w-fit"
       aria-label="View Mode"
       selectedKey={mode}
       onSelectionChange={setMode as any}

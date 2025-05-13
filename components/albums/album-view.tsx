@@ -35,14 +35,14 @@ export default function AlbumView({ album }: AlbumParams) {
         },
       }}
     >
-      <div>
+      <>
         <AlbumPageHeader title={album.title} />
 
-        <div className="flex justify-between gap-4">
+        <div className="flex flex-col-reverse md:flex-row justify-between gap-4">
           <div className="flex w-full relative">
             <div
               className={twMerge(
-                "flex w-full  absolutez-0 opacity-0 transition-all invisible",
+                "flex w-full absolute z-0 opacity-0 transition-all invisible",
                 viewMode === "gallery" && "opacity-100 visible"
               )}
             >
@@ -72,7 +72,7 @@ export default function AlbumView({ album }: AlbumParams) {
             memories={album.memories}
           />
         </div>
-      </div>
+      </>
     </MemoriesViewModeContext.Provider>
   );
 }

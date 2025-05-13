@@ -61,7 +61,7 @@ export default function RootLayout({
                   <UserButton />
                 </SignedIn>
               </header>
-              <main className="container mx-auto max-w-7xl pt-16 px-16 flex-grow">
+              <main className="container mx-auto max-w-7xl pt-16 px-8 md:px-16 flex-grow">
                 {children}
               </main>
             </div>

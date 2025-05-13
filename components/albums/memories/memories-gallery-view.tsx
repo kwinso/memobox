@@ -24,7 +24,7 @@ export default function MemoriesGalleryView({
         </Button>
       </div>
 
-      <div className="grid grid-cols-3 gap-4">
+      <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
         {memories.map((memory) => (
           <MemoryCard key={memory.id} memory={memory} />
         ))}

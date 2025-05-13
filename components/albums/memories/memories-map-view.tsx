@@ -73,6 +73,7 @@ export default function MemoriesMapView({
   ]);
   const center = getCenterBetweenPoints(points);
   const mapRef = useRef<MapRef>(null);
+  const mapCointainerRef = useRef<HTMLDivElement>(null);
   const [mapZoom, setMapZoom] = useState(1);
   const [viewBounds, setViewBounds] = useState<LngLatBounds | null>(null);
 
@@ -93,6 +94,10 @@ export default function MemoriesMapView({
 
   useEffect(() => {
     if (mapRef.current && selectedMemory) {
+      mapCointainerRef.current?.scrollIntoView({
+        behavior: "smooth",
+        block: "center",
+      });
       mapRef.current.easeTo({
         easeId: MoveToMemoryEaseId,
         center: {
@@ -147,8 +152,12 @@ export default function MemoriesMapView({
   }
 
   return (
-    <div className="flex w-full items-center justify-center h-[600px] rounded-xl overflow-hidden">
+    <div
+      className="flex flex-col w-full gap-2 justify-center h-[600px] rounded-xl overflow-hidden"
+      ref={mapCointainerRef}
+    >
       <Map
+        reuseMaps
         onLoad={onLoad}
         onZoom={onZoom}
         onMove={onMove}
