@@ -1,6 +1,7 @@
 "use client";
 import { Link } from "@heroui/react";
 import { ChevronLeftIcon } from "lucide-react";
+
 import MemoriesViewSelector from "./memories-view-selector";
 
 interface PageHeaderProps {
@@ -10,7 +11,7 @@ interface PageHeaderProps {
 export default function AlbumPageHeader({ title }: PageHeaderProps) {
   return (
     <div className="mb-4 flex w-full flex-col">
-      <Link href="/" className="flex items-center gap-2">
+      <Link className="flex items-center gap-2" href="/">
         <ChevronLeftIcon size={12} />
         back
       </Link>

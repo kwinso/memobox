@@ -1,6 +1,7 @@
+import { notFound } from "next/navigation";
+
 import AlbumView from "@/components/albums/album-view";
 import { getAlbumById } from "@/db/queries/albums";
-import { notFound } from "next/navigation";
 
 interface AlbumParams {
   params: Promise<{ albumId: string }>;

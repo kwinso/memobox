@@ -1,9 +1,10 @@
-import AlbumListItem from "@/components/albums/album-list-item";
-import CreateAlbumForm from "@/components/albums/create-album-form";
-import { getUserAlbums } from "@/db/queries/albums";
 import { currentUser } from "@clerk/nextjs/server";
 import { Spacer } from "@heroui/react";
 import { BoxIcon } from "lucide-react";
+
+import AlbumListItem from "@/components/albums/album-list-item";
+import CreateAlbumForm from "@/components/albums/create-album-form";
+import { getUserAlbums } from "@/db/queries/albums";
 
 // TODO: Scroll pagination
 export default async function Home() {

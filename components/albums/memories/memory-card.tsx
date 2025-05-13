@@ -1,6 +1,5 @@
 "use client";
 
-import { Memory } from "@/db/types";
 import {
   Card,
   CardFooter,
@@ -14,7 +13,10 @@ import {
 } from "@heroui/react";
 import { formatDistance, intlFormat } from "date-fns";
 import { ClockIcon } from "lucide-react";
+
 import ViewMemoryModal from "./view-memory-modal";
+
+import { Memory } from "@/db/types";
 
 interface MemoryCardProps {
   memory: Memory;
@@ -26,16 +28,15 @@ export default function MemoryCard({ memory }: MemoryCardProps) {
   return (
     <>
       <Card
-        isPressable
-        disableRipple={true}
-        onPress={onOpenChange}
         isFooterBlurred
+        isPressable
         className="hover:scale-105 border-2 border-transparent hover:border-primary-200 transition-all box-content"
+        disableRipple={true}
         radius="lg"
+        onPress={onOpenChange}
       >
         <CardHeader className="absolute z-10 top-1 flex-col items-center">
           <Tooltip
-            placement="bottom"
             content={intlFormat(memory.date, {
               year: "numeric",
               day: "numeric",
@@ -43,10 +44,11 @@ export default function MemoryCard({ memory }: MemoryCardProps) {
               hour: "numeric",
               minute: "numeric",
             })}
+            placement="bottom"
           >
             <Chip
-              size="sm"
               className="bg-black/10 backdrop-blur backdrop-saturate-150 cursor-pointer border-white/20 border-1"
+              size="sm"
             >
               <div className="flex gap-2 items-center text-white/80">
                 <ClockIcon size={12} />
@@ -65,7 +67,7 @@ export default function MemoryCard({ memory }: MemoryCardProps) {
           <p className="text-sm text-white/80">{memory.caption}</p>
         </CardFooter>
       </Card>
-      <Modal isOpen={isOpen} onOpenChange={onOpenChange} size="3xl">
+      <Modal isOpen={isOpen} size="3xl" onOpenChange={onOpenChange}>
         <ModalContent>{() => <ViewMemoryModal memory={memory} />}</ModalContent>
       </Modal>
     </>

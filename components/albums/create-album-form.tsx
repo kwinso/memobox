@@ -1,6 +1,5 @@
 "use client";
 
-import { createAlbum } from "@/db/queries/albums";
 import { useUser } from "@clerk/nextjs";
 import { Button } from "@heroui/button";
 import {
@@ -15,6 +14,8 @@ import {
 } from "@heroui/react";
 import React from "react";
 
+import { createAlbum } from "@/db/queries/albums";
+
 export default function CreateAlbumForm() {
   const { isOpen, onOpen, onOpenChange, onClose } = useDisclosure();
   const [title, setTitle] = React.useState("");
@@ -24,6 +25,7 @@ export default function CreateAlbumForm() {
   async function onSubmit() {
     if (title.length === 0) {
       setIsInvalid(true);
+
       return;
     }
 
@@ -37,7 +39,7 @@ export default function CreateAlbumForm() {
       {!isLoaded ? (
         <Spinner size="sm" />
       ) : (
-        <Button variant="light" color="primary" onClick={onOpen} size="sm">
+        <Button color="primary" size="sm" variant="light" onClick={onOpen}>
           add album
         </Button>
       )}
@@ -56,13 +58,13 @@ export default function CreateAlbumForm() {
                   memories in one place.
                 </span>
                 <Input
-                  autoFocus
+                  // autoFocus
                   isRequired
-                  isInvalid={isInvalid}
                   errorMessage="album title is required"
+                  isInvalid={isInvalid}
+                  placeholder="album title"
                   value={title}
                   onValueChange={setTitle}
-                  placeholder="album title"
                 />
               </ModalBody>
               <ModalFooter>

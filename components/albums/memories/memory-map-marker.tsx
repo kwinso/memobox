@@ -1,6 +1,4 @@
-import { Memory } from "@/db/types";
-import { LngLatBounds, MapRef, Marker } from "react-map-gl/mapbox";
-import MemoryCard from "./memory-card";
+import { LngLatBounds, Marker } from "react-map-gl/mapbox";
 import {
   Card,
   CardHeader,
@@ -15,7 +13,10 @@ import {
 import { intlFormat, formatDistance } from "date-fns";
 import { ClockIcon } from "lucide-react";
 import { twMerge } from "tailwind-merge";
+
 import ViewMemoryModal from "./view-memory-modal";
+
+import { Memory } from "@/db/types";
 
 interface MemoryMapMarkerProps {
   memory: Memory;
@@ -28,7 +29,7 @@ export default function MemoryMapMarker({
   mapZoom,
   viewBounds,
 }: MemoryMapMarkerProps) {
-  const { isOpen, onOpen, onOpenChange } = useDisclosure();
+  const { isOpen, onOpenChange } = useDisclosure();
 
   if (
     viewBounds &&
@@ -41,28 +42,27 @@ export default function MemoryMapMarker({
     <>
       <Marker
         className="flex justify-center items-center relative cursor-pointer"
-        longitude={memory.longitude!}
         latitude={memory.latitude!}
+        longitude={memory.longitude!}
         onClick={onOpenChange}
       >
-        <Modal isOpen={isOpen} onOpenChange={onOpenChange} size="3xl">
+        <Modal isOpen={isOpen} size="3xl" onOpenChange={onOpenChange}>
           <ModalContent>
             {() => <ViewMemoryModal memory={memory} />}
           </ModalContent>
         </Modal>
 
-        <div className="w-4 h-4 rounded-full bg-primary-500 absolute"></div>
+        <div className="w-4 h-4 rounded-full bg-primary-500 absolute" />
         <Card
           isFooterBlurred
           className={twMerge(
             "hover:scale-105 h-52 w-52 border-2 border-transparent hover:border-primary-200 box-content scale-0 transition-all",
-            mapZoom > 12 && "scale-100"
+            mapZoom > 12 && "scale-100",
           )}
           radius="lg"
         >
           <CardHeader className="absolute z-10 top-1 flex-col items-center">
             <Tooltip
-              placement="bottom"
               content={intlFormat(memory.date, {
                 year: "numeric",
                 day: "numeric",
@@ -70,10 +70,11 @@ export default function MemoryMapMarker({
                 hour: "numeric",
                 minute: "numeric",
               })}
+              placement="bottom"
             >
               <Chip
-                size="sm"
                 className="bg-black/10 backdrop-blur backdrop-saturate-150 cursor-pointer border-white/20 border-1"
+                size="sm"
               >
                 <div className="flex gap-2 items-center text-white/80">
                   <ClockIcon size={12} />

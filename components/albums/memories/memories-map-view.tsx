@@ -1,5 +1,7 @@
 "use client";
 
+// import react
+import "react";
 import Map, {
   Layer,
   LayerProps,
@@ -12,9 +14,11 @@ import Map, {
 // import Map from 'react-map-gl/mapbox-legacy';
 import "mapbox-gl/dist/mapbox-gl.css";
 import { useEffect, useRef, useState } from "react";
+
+import MemoryMapMarker from "./memory-map-marker";
+
 import { Memory } from "@/db/types";
 import { getCenterBetweenPoints } from "@/util/geo";
-import MemoryMapMarker from "./memory-map-marker";
 
 interface MemoriesMapViewProps {
   memories: Memory[];
@@ -65,7 +69,7 @@ export default function MemoriesMapView({
   selectedMemory,
 }: MemoriesMapViewProps) {
   const memoriesWithLocation = memories.filter(
-    (memory) => memory.longitude && memory.latitude
+    (memory) => memory.longitude && memory.latitude,
   );
   const points = memoriesWithLocation.map((memory) => [
     memory.latitude!,
@@ -114,6 +118,7 @@ export default function MemoriesMapView({
     if (mapRef.current) {
       setTimeout(() => {
         const zoom = 10;
+
         // animate zoom to center
         mapRef.current!.easeTo({
           zoom: zoom,
@@ -127,11 +132,11 @@ export default function MemoriesMapView({
 
   function onZoom(e: ViewStateChangeEvent) {
     setMapZoom(e.viewState.zoom);
-    updateViewBounds(e);
+    updateViewBounds();
   }
 
-  function onMove(e: ViewStateChangeEvent) {
-    updateViewBounds(e);
+  function onMove() {
+    updateViewBounds();
   }
 
   function onMoveEnd(e: ViewStateChangeEvent) {
@@ -145,7 +150,7 @@ export default function MemoriesMapView({
     onMoveHandler();
   }
 
-  function updateViewBounds(e: ViewStateChangeEvent) {
+  function updateViewBounds() {
     if (mapRef.current) {
       setViewBounds(mapRef.current!.getBounds());
     }
@@ -153,19 +158,12 @@ export default function MemoriesMapView({
 
   return (
     <div
-      className="flex flex-col w-full gap-2 justify-center h-[600px] rounded-xl overflow-hidden"
       ref={mapCointainerRef}
+      className="flex flex-col w-full gap-2 justify-center h-[600px] rounded-xl overflow-hidden"
     >
       <Map
-        reuseMaps
-        onLoad={onLoad}
-        onZoom={onZoom}
-        onMove={onMove}
-        onMoveEnd={onMoveEnd}
         ref={mapRef}
-        mapboxAccessToken={process.env.NEXT_PUBLIC_MAPBOX_PUBLIC_TOKEN}
-        pitch={30}
-        projection="globe"
+        reuseMaps
         initialViewState={{
           // padding: { top: 100, right: 100, bottom: 100, left: 100 },
           latitude: center.latitude,
@@ -173,18 +171,22 @@ export default function MemoriesMapView({
           zoom: mapZoom,
         }}
         mapStyle="mapbox://styles/mapbox/streets-v12"
-        onClick={(e) => {
-          console.log(e);
-        }}
+        mapboxAccessToken={process.env.NEXT_PUBLIC_MAPBOX_PUBLIC_TOKEN}
+        pitch={30}
+        projection="globe"
+        onLoad={onLoad}
+        onMove={onMove}
+        onMoveEnd={onMoveEnd}
+        onZoom={onZoom}
       >
         <NavigationControl />
         <Layer {...buildingsLayer} />
         {memories.map((memory, index) => (
           <MemoryMapMarker
-            mapZoom={mapZoom}
-            viewBounds={viewBounds}
-            memory={memory}
             key={index}
+            mapZoom={mapZoom}
+            memory={memory}
+            viewBounds={viewBounds}
           />
         ))}
       </Map>

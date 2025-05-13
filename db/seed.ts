@@ -1,6 +1,8 @@
-import { db } from ".";
 import { faker } from "@faker-js/faker";
+
 import { albums, memories } from "./schema";
+
+import { db } from ".";
 
 async function cleanup() {
   await db.delete(albums);
@@ -14,17 +16,23 @@ const images = [
 ];
 
 async function main() {
+  // eslint-disable-next-line  no-console
   console.info("Cleaning up...");
   await cleanup();
 
   // check if only drop is needed
   const drop = process.argv.includes("--drop");
+
   if (drop) {
+    // eslint-disable-next-line  no-console
     console.log("Only drop requested, exiting...");
+
     return;
   }
 
   const albumCount = 3;
+
+  // eslint-disable-next-line  no-console
   console.info(`Seeding ${albumCount} albums...`);
   for (let i = 0; i < albumCount; i++) {
     // Ading albums
@@ -38,12 +46,14 @@ async function main() {
       .returning();
 
     const memoriesCount = faker.number.int({ min: 3, max: 5 });
+
     for (let j = 0; j < memoriesCount; j++) {
       const newYorkLocaiton: [latitude: number, longitude: number] = [43, -79];
       const [lat, long] = faker.location.nearbyGPSCoordinate({
         origin: newYorkLocaiton,
         radius: 10,
       });
+
       // Adding memories
       await db.insert(memories).values({
         caption: faker.lorem.sentence(),

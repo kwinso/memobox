@@ -1,15 +1,10 @@
 "use client";
-import { Tabs, Tab, Card, CardBody } from "@heroui/react";
+import { Tabs, Tab } from "@heroui/react";
 import { createContext, useContext } from "react";
-
-interface IMemoriesViewModeContext {
-  mode: "gallery" | "map";
-  setMode: (mode: "gallery" | "map") => void;
-}
 
 export const MemoriesViewModeContext = createContext({
   mode: "gallery",
-  setMode: (mode: "gallery" | "map") => {},
+  setMode: (_: "gallery" | "map") => {},
 });
 
 export default function MemoriesViewSelector() {
@@ -18,13 +13,13 @@ export default function MemoriesViewSelector() {
   return (
     <Tabs
       fullWidth
-      className="md:w-fit"
       aria-label="View Mode"
+      className="md:w-fit"
       selectedKey={mode}
       onSelectionChange={setMode as any}
     >
-      <Tab key="gallery" title="gallery"></Tab>
-      <Tab key="map" title="map"></Tab>
+      <Tab key="gallery" title="gallery" />
+      <Tab key="map" title="map" />
     </Tabs>
   );
 }

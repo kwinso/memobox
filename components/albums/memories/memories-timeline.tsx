@@ -1,7 +1,8 @@
-import { Memory } from "@/db/types";
 import { Link } from "@heroui/react";
-import { format, formatDate, formatDistance, intlFormat } from "date-fns";
+import { intlFormat } from "date-fns";
 import { twMerge } from "tailwind-merge";
+
+import { Memory } from "@/db/types";
 
 interface MemoryListProps {
   memories: any[];
@@ -22,22 +23,22 @@ export default function MemoriesTimeline({
       </div>
       {memories.length === 0 && (
         <span className="text-sm text-default-500">
-          timeline shows your memories from a bird's eye view. you can add new
-          memories by either on a map or by pressing "add" button in the gallery
-          view
+          timeline shows your memories from a bird&apos;s eye view. you can add
+          new memories by either on a map or by pressing &quot;add&quot; button
+          in the gallery view
         </span>
       )}
 
       {memories.map((memory) => (
         <Link
-          onClick={() => onSelectMemory(memory)}
           key={memory.id}
           className={twMerge(
             "flex flex-col gap-2 items-start group text-default-500 border-l-2 pl-2 cursor-pointer transition-all hover:scale-105 group-hover:border-primary-200",
             selectedMemory?.id === memory.id
               ? "scale-105 border-primary-200 text-primary-500"
-              : ""
+              : "",
           )}
+          onClick={() => onSelectMemory(memory)}
         >
           <p className="text-sm font-bold transition-all group-hover:text-primary-500">
             {memory.caption}

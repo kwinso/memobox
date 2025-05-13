@@ -1,18 +1,18 @@
 "use server";
 
-import { and, asc, desc, eq, or } from "drizzle-orm";
-
-import { db } from "..";
-import { albums, memories } from "../schema";
-import { Album, AlbumWithMemories } from "../types";
+import { desc, eq } from "drizzle-orm";
 import { revalidatePath } from "next/cache";
 import { currentUser } from "@clerk/nextjs/server";
 import { z } from "zod";
 
+import { db } from "..";
+import { albums, memories } from "../schema";
+import { Album, AlbumWithMemories } from "../types";
+
 export async function getUserAlbums(
   authorId: string,
   page: number = 1,
-  perPage: number = 10
+  perPage: number = 10,
 ): Promise<Album[]> {
   return db
     .select()
@@ -24,7 +24,7 @@ export async function getUserAlbums(
 }
 
 export async function getAlbumById(
-  id: string
+  id: string,
 ): Promise<AlbumWithMemories | undefined> {
   const user = await currentUser();
   const safeId = await z.string().uuid().safeParseAsync(id);

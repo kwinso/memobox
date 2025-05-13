@@ -1,13 +1,14 @@
 "use client";
-import { Album, AlbumWithMemories, Memory } from "@/db/types";
+import { useEffect, useState } from "react";
+import { twMerge } from "tailwind-merge";
+
 import AlbumPageHeader from "./album-page-header";
 import MemoriesTimeline from "./memories/memories-timeline";
-import { useEffect, useState } from "react";
 import { MemoriesViewModeContext } from "./memories-view-selector";
 import MemoriesGalleryView from "./memories/memories-gallery-view";
-import { twMerge } from "tailwind-merge";
 import MemoriesMapView from "./memories/memories-map-view";
-import { Button } from "@heroui/button";
+
+import { AlbumWithMemories, Memory } from "@/db/types";
 
 interface AlbumParams {
   album: AlbumWithMemories;
@@ -43,7 +44,7 @@ export default function AlbumView({ album }: AlbumParams) {
             <div
               className={twMerge(
                 "flex w-full absolute z-0 opacity-0 transition-all invisible",
-                viewMode === "gallery" && "opacity-100 visible"
+                viewMode === "gallery" && "opacity-100 visible",
               )}
             >
               <MemoriesGalleryView memories={album.memories} />
@@ -52,24 +53,24 @@ export default function AlbumView({ album }: AlbumParams) {
             <div
               className={twMerge(
                 "flex w-full absolute z-1 opacity-0 transition-all invisible",
-                viewMode === "map" && "opacity-100 visible"
+                viewMode === "map" && "opacity-100 visible",
               )}
             >
               {renderMaps && (
                 <MemoriesMapView
-                  onMove={() => setSelectedMemory(null)}
-                  selectedMemory={selectedMemory}
                   memories={album.memories}
+                  selectedMemory={selectedMemory}
+                  onMove={() => setSelectedMemory(null)}
                 />
               )}
             </div>
           </div>
           <MemoriesTimeline
+            memories={album.memories}
             selectedMemory={selectedMemory}
             onSelectMemory={(memory) =>
               viewMode == "map" && setSelectedMemory(memory)
             }
-            memories={album.memories}
           />
         </div>
       </>

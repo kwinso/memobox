@@ -1,6 +1,6 @@
 import { Button } from "@heroui/button";
-import { ApertureIcon, UploadIcon } from "lucide-react";
-import MemoriesViewSelector from "../memories-view-selector";
+import { UploadIcon } from "lucide-react";
+
 import MemoryCard from "./memory-card";
 
 interface MemoriesGalleryViewProps {
@@ -15,10 +15,10 @@ export default function MemoriesGalleryView({
       <div className="flex w-full gap-2 h-fit items-center justify-between">
         <h3 className="text-xl font-bold">memories ({memories.length})</h3>
         <Button
-          variant="flat"
-          size="sm"
           color="primary"
+          size="sm"
           startContent={<UploadIcon size={15} />}
+          variant="flat"
         >
           add memory
         </Button>
