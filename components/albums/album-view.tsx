@@ -1,11 +1,13 @@
 "use client";
-import { Album, AlbumWithMemories } from "@/db/types";
+import { Album, AlbumWithMemories, Memory } from "@/db/types";
 import AlbumPageHeader from "./album-page-header";
 import MemoriesTimeline from "./memories/memories-timeline";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { MemoriesViewModeContext } from "./memories-view-selector";
 import MemoriesGalleryView from "./memories/memories-gallery-view";
 import { twMerge } from "tailwind-merge";
+import MemoriesMapView from "./memories/memories-map-view";
+import { Button } from "@heroui/button";
 
 interface AlbumParams {
   album: AlbumWithMemories;
@@ -13,10 +15,25 @@ interface AlbumParams {
 
 export default function AlbumView({ album }: AlbumParams) {
   const [viewMode, setViewMode] = useState<"gallery" | "map">("gallery");
+  const [renderMaps, setRenderMaps] = useState(false);
+  const [selectedMemory, setSelectedMemory] = useState<Memory | null>(null);
+
+  // Make sure maps are only loaded once when the user actually wants to see them
+  useEffect(() => {
+    if (viewMode === "map" && !renderMaps) {
+      setRenderMaps(true);
+    }
+  }, [viewMode]);
 
   return (
     <MemoriesViewModeContext.Provider
-      value={{ mode: viewMode, setMode: setViewMode }}
+      value={{
+        mode: viewMode,
+        setMode: (mode) => {
+          setSelectedMemory(null);
+          setViewMode(mode);
+        },
+      }}
     >
       <div>
         <AlbumPageHeader title={album.title} />
@@ -38,11 +55,22 @@ export default function AlbumView({ album }: AlbumParams) {
                 viewMode === "map" && "opacity-100 visible"
               )}
             >
-              Hello
-              {/* <MemoriesMapView /> */}
+              {renderMaps && (
+                <MemoriesMapView
+                  onMove={() => setSelectedMemory(null)}
+                  selectedMemory={selectedMemory}
+                  memories={album.memories}
+                />
+              )}
             </div>
           </div>
-          <MemoriesTimeline memories={album.memories} />
+          <MemoriesTimeline
+            selectedMemory={selectedMemory}
+            onSelectMemory={(memory) =>
+              viewMode == "map" && setSelectedMemory(memory)
+            }
+            memories={album.memories}
+          />
         </div>
       </div>
     </MemoriesViewModeContext.Provider>

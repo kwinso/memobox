@@ -2,29 +2,26 @@
 
 import { Memory } from "@/db/types";
 import {
-  Button,
   Card,
   CardFooter,
   CardHeader,
   Chip,
   Image,
   Modal,
-  ModalBody,
   ModalContent,
-  ModalFooter,
-  ModalHeader,
   Tooltip,
   useDisclosure,
 } from "@heroui/react";
-import { formatDistance, format, intlFormat } from "date-fns";
-import { CalendarIcon, ClockIcon } from "lucide-react";
+import { formatDistance, intlFormat } from "date-fns";
+import { ClockIcon } from "lucide-react";
+import ViewMemoryModal from "./view-memory-modal";
 
 interface MemoryCardProps {
   memory: Memory;
 }
 
 export default function MemoryCard({ memory }: MemoryCardProps) {
-  const { isOpen, onOpen, onOpenChange } = useDisclosure();
+  const { isOpen, onOpenChange } = useDisclosure();
 
   return (
     <>
@@ -69,17 +66,7 @@ export default function MemoryCard({ memory }: MemoryCardProps) {
         </CardFooter>
       </Card>
       <Modal isOpen={isOpen} onOpenChange={onOpenChange} size="3xl">
-        <ModalContent>
-          {(onClose) => (
-            <>
-              <ModalHeader>{memory.caption}</ModalHeader>
-              <ModalBody className="flex items-center">
-                <Image alt={memory.caption} src={memory.uploadUrl} />
-              </ModalBody>
-              <ModalFooter></ModalFooter>
-            </>
-          )}
-        </ModalContent>
+        <ModalContent>{() => <ViewMemoryModal memory={memory} />}</ModalContent>
       </Modal>
     </>
   );

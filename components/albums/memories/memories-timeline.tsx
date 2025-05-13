@@ -1,10 +1,20 @@
+import { Memory } from "@/db/types";
 import { Link } from "@heroui/react";
+import { format, formatDate, formatDistance, intlFormat } from "date-fns";
+import { twMerge } from "tailwind-merge";
 
 interface MemoryListProps {
   memories: any[];
+  selectedMemory: Memory | null;
+  onSelectMemory: (memory: Memory) => void;
 }
 
-export default function MemoriesTimeline({ memories }: MemoryListProps) {
+// TODO: Add collaps for mobile devices
+export default function MemoriesTimeline({
+  memories,
+  selectedMemory,
+  onSelectMemory,
+}: MemoryListProps) {
   return (
     <div className="bg-default-100 flex flex-col gap-4 h-fit border-2 border-default-200 p-4 rounded-xl min-w-72 w-1/5">
       <div className="flex justify-between items-center">
@@ -20,12 +30,27 @@ export default function MemoriesTimeline({ memories }: MemoryListProps) {
 
       {memories.map((memory) => (
         <Link
+          onClick={() => onSelectMemory(memory)}
           key={memory.id}
-          className="flex gap-2 items-center group border-l-2 pl-2 cursor-pointer transition-all hover:scale-105 hover:border-primary-200"
+          className={twMerge(
+            "flex flex-col gap-2 items-start group text-default-500 border-l-2 pl-2 cursor-pointer transition-all hover:scale-105 group-hover:border-primary-200",
+            selectedMemory?.id === memory.id
+              ? "scale-105 border-primary-200 text-primary-500"
+              : ""
+          )}
         >
-          <p className="text-sm text-default-500 group-hover:text-primary-500 transition-all">
+          <p className="text-sm font-bold transition-all group-hover:text-primary-500">
             {memory.caption}
           </p>
+          <span className="text-xs transition-all group-hover:text-primary-500">
+            {intlFormat(memory.date, {
+              year: "numeric",
+              month: "long",
+              day: "numeric",
+              hour: "numeric",
+              minute: "numeric",
+            })}
+          </span>
         </Link>
       ))}
     </div>

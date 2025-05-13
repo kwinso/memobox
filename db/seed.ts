@@ -39,12 +39,10 @@ async function main() {
 
     const memoriesCount = faker.number.int({ min: 3, max: 5 });
     for (let j = 0; j < memoriesCount; j++) {
-      const newYorkLocaiton: [latitude: number, longitude: number] = [
-        40.7128, -74.006,
-      ];
+      const newYorkLocaiton: [latitude: number, longitude: number] = [43, -79];
       const [lat, long] = faker.location.nearbyGPSCoordinate({
         origin: newYorkLocaiton,
-        radius: 100,
+        radius: 10,
       });
       // Adding memories
       await db.insert(memories).values({

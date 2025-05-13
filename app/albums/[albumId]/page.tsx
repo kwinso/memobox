@@ -1,6 +1,4 @@
-import AlbumPageHeader from "@/components/albums/album-page-header";
 import AlbumView from "@/components/albums/album-view";
-import MemoriesTimeline from "@/components/albums/memories/memories-timeline";
 import { getAlbumById } from "@/db/queries/albums";
 import { notFound } from "next/navigation";
 

@@ -19,21 +19,22 @@ export const albums = pgTable("albums", {
 });
 
 export const albumRelations = relations(albums, ({ many }) => ({
-  participants: many(participants),
+  // participants: many(participants),
   memories: many(memories),
 }));
 
-export const participants = pgTable("participants", {
-  id: uuid().defaultRandom().primaryKey(),
-  name: varchar({ length: 255 }).notNull(),
-  albumId: uuid().notNull(),
-  userId: clerkUserId.notNull(),
-  createdAt: timestamp().notNull().defaultNow(),
-});
+// export const participants = pgTable("participants", {
+//   id: uuid().defaultRandom().primaryKey(),
+//   name: varchar({ length: 255 }).notNull(),
+//   albumId: uuid().notNull(),
+//   userId: clerkUserId.notNull(),
+//   createdAt: timestamp().notNull().defaultNow(),
+// });
 
 export const memories = pgTable("memories", {
   id: uuid().defaultRandom().primaryKey(),
   caption: varchar({ length: 255 }).notNull(),
+  isImage: boolean().notNull().default(false),
   uploadUrl: varchar({ length: 255 }).notNull(),
   date: timestamp({ withTimezone: true }).notNull(),
   longitude: real(),
