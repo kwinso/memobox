@@ -1,11 +1,11 @@
 import { Link } from "@heroui/react";
-import { intlFormat } from "date-fns";
 import { twMerge } from "tailwind-merge";
+import { ImageIcon } from "lucide-react";
 
-import { Memory } from "@/db/types";
+import { Memory, MemoryWithUploads } from "@/db/types";
 
 interface MemoryListProps {
-  memories: any[];
+  memories: MemoryWithUploads[];
   selectedMemory: Memory | null;
   onSelectMemory: (memory: Memory) => void;
 }
@@ -43,15 +43,11 @@ export default function MemoriesTimeline({
           <p className="text-sm font-bold transition-all group-hover:text-primary-500">
             {memory.caption}
           </p>
-          <span className="text-xs transition-all group-hover:text-primary-500">
-            {intlFormat(memory.date, {
-              year: "numeric",
-              month: "long",
-              day: "numeric",
-              hour: "numeric",
-              minute: "numeric",
-            })}
-          </span>
+          <div className="flex items-center gap-2 text-xs transition-all group-hover:text-primary-500">
+            <ImageIcon size={12} />
+            {memory.uploads.length}{" "}
+            {memory.uploads.length > 1 ? "images" : "image"}
+          </div>
         </Link>
       ))}
     </div>

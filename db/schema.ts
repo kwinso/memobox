@@ -34,9 +34,6 @@ export const albumRelations = relations(albums, ({ many }) => ({
 export const memories = pgTable("memories", {
   id: uuid().defaultRandom().primaryKey(),
   caption: varchar({ length: 255 }).notNull(),
-  isImage: boolean().notNull().default(false),
-  uploadUrl: varchar({ length: 255 }).notNull(),
-  date: timestamp({ withTimezone: true }).notNull(),
   longitude: real(),
   latitude: real(),
   albumId: uuid().notNull(),
@@ -44,9 +41,26 @@ export const memories = pgTable("memories", {
   createdAt: timestamp().notNull().defaultNow(),
 });
 
-export const memoriesRelations = relations(memories, ({ one }) => ({
+export const memoriesRelations = relations(memories, ({ one, many }) => ({
   album: one(albums, {
     fields: [memories.albumId],
     references: [albums.id],
+  }),
+  uploads: many(memoryUploads),
+}));
+
+export const memoryUploads = pgTable("memory_uploads", {
+  id: uuid().defaultRandom().primaryKey(),
+  memoryId: uuid().notNull(),
+  date: timestamp({ withTimezone: true }).notNull(),
+  isImage: boolean().notNull().default(false),
+  uploadUrl: varchar({ length: 255 }).notNull(),
+  createdAt: timestamp().notNull().defaultNow(),
+});
+
+export const memoryUploadsRelations = relations(memoryUploads, ({ one }) => ({
+  memory: one(memories, {
+    fields: [memoryUploads.memoryId],
+    references: [memories.id],
   }),
 }));

@@ -1,6 +1,6 @@
 import { faker } from "@faker-js/faker";
 
-import { albums, memories } from "./schema";
+import { albums, memories, memoryUploads } from "./schema";
 
 import { db } from ".";
 
@@ -55,15 +55,30 @@ async function main() {
       });
 
       // Adding memories
-      await db.insert(memories).values({
-        caption: faker.lorem.sentence(),
-        date: faker.date.recent(),
-        authorId: process.env.SEED_AUTHOR_ID!,
-        albumId: album[0].id,
-        latitude: lat,
-        longitude: long,
-        uploadUrl: images[Math.floor(Math.random() * images.length)],
-      });
+      const memory = await db
+        .insert(memories)
+        .values({
+          caption: faker.lorem.sentence(),
+          authorId: process.env.SEED_AUTHOR_ID!,
+          albumId: album[0].id,
+          latitude: lat,
+          longitude: long,
+        })
+        .returning();
+
+      const uploadsCount = faker.number.int({ min: 1, max: 3 });
+
+      for (let k = 0; k < uploadsCount; k++) {
+        await db
+          .insert(memoryUploads)
+          .values({
+            date: faker.date.recent(),
+            memoryId: memory[0].id,
+            uploadUrl: images[Math.floor(Math.random() * images.length)],
+            isImage: true,
+          })
+          .returning();
+      }
     }
   }
 }

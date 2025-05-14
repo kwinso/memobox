@@ -39,7 +39,10 @@ export async function getAlbumById(
     with: {
       // TODO: Fetching all memories is probably a bad idea
       memories: {
-        orderBy: desc(memories.date),
+        orderBy: desc(memories.createdAt),
+        with: {
+          uploads: true,
+        },
       },
     },
   });
