@@ -2,7 +2,6 @@ import { auth } from "@clerk/nextjs/server";
 import { createUploadthing, type FileRouter } from "uploadthing/next";
 import { UploadThingError } from "uploadthing/server";
 import { string, z } from "zod";
-import { revalidatePath } from "next/cache";
 
 import { addMemoryUpload, createMemory } from "@/db/queries/memories";
 import { checkAlbumExistsForUser } from "@/db/queries/albums";
@@ -52,12 +51,10 @@ export const fileRouter = {
       // TODO: Handle error
     })
     .onUploadComplete(async ({ metadata, file }) => {
-      const { memoryId, albumId } = metadata;
+      const { memoryId } = metadata;
 
       // TODO: Should set the type properly (image or video)
       await addMemoryUpload(memoryId, file.ufsUrl);
-
-      revalidatePath(`/albums/${albumId}`);
 
       return {};
     }),

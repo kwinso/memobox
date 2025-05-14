@@ -1,3 +1,4 @@
+"use client";
 import type { OurFileRouter } from "@/app/api/uploadthing/core";
 
 import { Button } from "@heroui/button";
@@ -18,6 +19,7 @@ import { UploadIcon } from "lucide-react";
 import { useState } from "react";
 import { generateUploadDropzone } from "@uploadthing/react";
 import { twMerge } from "tailwind-merge";
+import { useRouter } from "next/navigation";
 
 export const UploadDropzone = generateUploadDropzone<OurFileRouter>();
 
@@ -29,6 +31,7 @@ export default function AddMemoryForm({ albumId }: AddMemoryFormProps) {
   const { isOpen, onOpenChange } = useDisclosure();
   const [caption, setCaption] = useState("");
   const [date, setDate] = useState<ZonedDateTime>(now(getLocalTimeZone()));
+  const router = useRouter();
 
   return (
     <>
@@ -136,6 +139,7 @@ export default function AddMemoryForm({ albumId }: AddMemoryFormProps) {
                       date: date!.toString(),
                     }}
                     onClientUploadComplete={() => {
+                      router.refresh();
                       onClose();
                       addToast({
                         title: "Memory created",
