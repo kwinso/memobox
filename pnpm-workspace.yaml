@@ -1,4 +1,5 @@
 onlyBuiltDependencies:
-  - "@heroui/shared-utils"
+  - '@heroui/shared-utils'
+  - msgpackr-extract
   - sharp
   - unrs-resolver

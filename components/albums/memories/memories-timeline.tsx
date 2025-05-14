@@ -7,7 +7,7 @@ import { Memory, MemoryWithUploads } from "@/db/types";
 interface MemoryListProps {
   memories: MemoryWithUploads[];
   selectedMemory: Memory | null;
-  onSelectMemory: (memory: Memory) => void;
+  onSelectMemory: (memory: MemoryWithUploads) => void;
 }
 
 // TODO: Add collaps for mobile devices

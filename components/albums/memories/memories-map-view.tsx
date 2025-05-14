@@ -14,14 +14,16 @@ import Map, {
 // import Map from 'react-map-gl/mapbox-legacy';
 import "mapbox-gl/dist/mapbox-gl.css";
 import { useEffect, useRef, useState } from "react";
+import { addToast } from "@heroui/react";
+import { MapPinnedIcon } from "lucide-react";
 
 import MemoryMapMarker from "./memory-map-marker";
 
-import { Memory } from "@/db/types";
+import { Memory, MemoryWithUploads } from "@/db/types";
 import { getCenterBetweenPoints } from "@/util/geo";
 
 interface MemoriesMapViewProps {
-  memories: Memory[];
+  memories: MemoryWithUploads[];
   selectedMemory: Memory | null;
   onMove: () => void;
 }
@@ -71,6 +73,7 @@ export default function MemoriesMapView({
   const memoriesWithLocation = memories.filter(
     (memory) => memory.longitude && memory.latitude,
   );
+
   const points = memoriesWithLocation.map((memory) => [
     memory.latitude!,
     memory.longitude!,
@@ -114,9 +117,25 @@ export default function MemoriesMapView({
     }
   }, [selectedMemory]);
 
+  // TODO: This cool animation only works when we render the map for the first time, which is sad
   function onLoad() {
-    if (mapRef.current) {
-      setTimeout(() => {
+    if (memoriesWithLocation.length === 0) {
+      addToast({
+        classNames: {
+          icon: "fill-none",
+        },
+        icon: <MapPinnedIcon size={16} />,
+        title: "no memories to show",
+        color: "warning",
+        description:
+          "click anywhere on the map to add memories that are related to a location",
+      });
+
+      return;
+    }
+
+    setTimeout(() => {
+      if (mapRef.current) {
         const zoom = 10;
 
         // animate zoom to center
@@ -126,8 +145,8 @@ export default function MemoriesMapView({
           duration: 1500,
         });
         setMapZoom(zoom);
-      }, 300);
-    }
+      }
+    }, 300);
   }
 
   function onZoom(e: ViewStateChangeEvent) {
@@ -140,8 +159,8 @@ export default function MemoriesMapView({
   }
 
   function onMoveEnd(e: ViewStateChangeEvent) {
-    //@ts-ignore
-    const easeId = e.target._easeOptions.easeId;
+    // @ts-ignore
+    const easeId = e.target._easeOptions?.easeId ?? null;
 
     // If the movement was caused by the selecting a memory, we don't want to notify that the map moved
     if (easeId === MoveToMemoryEaseId) {
@@ -169,10 +188,10 @@ export default function MemoriesMapView({
           latitude: center.latitude,
           longitude: center.longitude,
           zoom: mapZoom,
+          pitch: 30,
         }}
         mapStyle="mapbox://styles/mapbox/streets-v12"
         mapboxAccessToken={process.env.NEXT_PUBLIC_MAPBOX_PUBLIC_TOKEN}
-        pitch={30}
         projection="globe"
         onLoad={onLoad}
         onMove={onMove}
@@ -181,7 +200,7 @@ export default function MemoriesMapView({
       >
         <NavigationControl />
         <Layer {...buildingsLayer} />
-        {memories.map((memory, index) => (
+        {memoriesWithLocation.map((memory, index) => (
           <MemoryMapMarker
             key={index}
             mapZoom={mapZoom}

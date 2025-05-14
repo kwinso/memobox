@@ -44,7 +44,7 @@ export default function CreateAlbumForm() {
         </Button>
       )}
 
-      <Modal isOpen={isOpen} onOpenChange={onOpenChange}>
+      <Modal backdrop="blur" isOpen={isOpen} onOpenChange={onOpenChange}>
         <ModalContent>
           {(onClose) => (
             <>

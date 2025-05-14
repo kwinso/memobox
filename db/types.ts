@@ -6,7 +6,9 @@ export type MemoryUpload = typeof memoryUploads.$inferSelect;
 export type MemoryWithUploads = Memory & {
   uploads: MemoryUpload[];
 };
-
 export type AlbumWithMemories = Album & {
-  memories: Memory[];
+  memories: MemoryWithUploads[];
 };
+
+export type CreateMemory = typeof memories.$inferInsert;
+export type CreateMemoryUpload = typeof memoryUploads.$inferInsert;

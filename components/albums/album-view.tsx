@@ -8,7 +8,7 @@ import { MemoriesViewModeContext } from "./memories-view-selector";
 import MemoriesGalleryView from "./memories/memories-gallery-view";
 import MemoriesMapView from "./memories/memories-map-view";
 
-import { AlbumWithMemories, Memory } from "@/db/types";
+import { AlbumWithMemories, MemoryWithUploads } from "@/db/types";
 
 interface AlbumParams {
   album: AlbumWithMemories;
@@ -17,7 +17,8 @@ interface AlbumParams {
 export default function AlbumView({ album }: AlbumParams) {
   const [viewMode, setViewMode] = useState<"gallery" | "map">("gallery");
   const [renderMaps, setRenderMaps] = useState(false);
-  const [selectedMemory, setSelectedMemory] = useState<Memory | null>(null);
+  const [selectedMemory, setSelectedMemory] =
+    useState<MemoryWithUploads | null>(null);
 
   // Make sure maps are only loaded once when the user actually wants to see them
   useEffect(() => {
@@ -47,7 +48,10 @@ export default function AlbumView({ album }: AlbumParams) {
                 viewMode === "gallery" && "opacity-100 visible",
               )}
             >
-              <MemoriesGalleryView memories={album.memories} />
+              <MemoriesGalleryView
+                albumId={album.id}
+                memories={album.memories}
+              />
             </div>
 
             <div

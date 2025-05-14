@@ -23,6 +23,19 @@ export async function getUserAlbums(
     .where(eq(albums.authorId, authorId));
 }
 
+/// Checks if the album exists and if it does, is the user the author
+export async function checkAlbumExistsForUser(
+  id: string,
+  user: string,
+): Promise<boolean> {
+  const ablum = await db.query.albums.findFirst({
+    where: (_, { eq, and }) =>
+      and(eq(albums.id, id), eq(albums.authorId, user)),
+  });
+
+  return ablum !== undefined;
+}
+
 export async function getAlbumById(
   id: string,
 ): Promise<AlbumWithMemories | undefined> {

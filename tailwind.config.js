@@ -1,4 +1,6 @@
 import { heroui } from "@heroui/theme";
+import { withUt } from "uploadthing/tw";
+
 
 /** @type {import('tailwindcss').Config} */
 const config = {
@@ -19,4 +21,4 @@ const config = {
   plugins: [heroui()],
 };
 
-module.exports = config;
+module.exports = withUt(config);
