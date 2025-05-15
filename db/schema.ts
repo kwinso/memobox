@@ -6,6 +6,8 @@ import {
   timestamp,
   real,
   boolean,
+  date,
+  time,
 } from "drizzle-orm/pg-core";
 
 const clerkUserId = varchar({ length: 255 });
@@ -34,6 +36,7 @@ export const albumRelations = relations(albums, ({ many }) => ({
 export const memories = pgTable("memories", {
   id: uuid().defaultRandom().primaryKey(),
   caption: varchar({ length: 255 }).notNull(),
+  date: date({ mode: "date" }).notNull(),
   longitude: real(),
   latitude: real(),
   albumId: uuid().notNull(),
@@ -52,7 +55,7 @@ export const memoriesRelations = relations(memories, ({ one, many }) => ({
 export const memoryUploads = pgTable("memory_uploads", {
   id: uuid().defaultRandom().primaryKey(),
   memoryId: uuid().notNull(),
-  date: timestamp({ withTimezone: true }).notNull(),
+  time: time({ precision: 0 }),
   isImage: boolean().notNull().default(false),
   uploadUrl: varchar({ length: 255 }).notNull(),
   createdAt: timestamp().notNull().defaultNow(),

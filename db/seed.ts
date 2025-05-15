@@ -1,4 +1,5 @@
 import { faker } from "@faker-js/faker";
+import { format } from "date-fns";
 
 import { albums, memories, memoryUploads } from "./schema";
 
@@ -45,7 +46,7 @@ async function main() {
       })
       .returning();
 
-    const memoriesCount = faker.number.int({ min: 3, max: 5 });
+    const memoriesCount = faker.number.int({ min: 8, max: 15 });
 
     for (let j = 0; j < memoriesCount; j++) {
       const newYorkLocaiton: [latitude: number, longitude: number] = [43, -79];
@@ -59,6 +60,7 @@ async function main() {
         .insert(memories)
         .values({
           caption: faker.lorem.sentence(),
+          date: faker.date.recent(),
           authorId: process.env.SEED_AUTHOR_ID!,
           albumId: album[0].id,
           latitude: lat,
@@ -72,8 +74,8 @@ async function main() {
         await db
           .insert(memoryUploads)
           .values({
-            date: faker.date.recent(),
             memoryId: memory[0].id,
+            time: format(faker.date.anytime(), "HH:mm"),
             uploadUrl: images[Math.floor(Math.random() * images.length)],
             isImage: true,
           })

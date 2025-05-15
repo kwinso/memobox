@@ -1,10 +1,9 @@
 import { auth } from "@clerk/nextjs/server";
 import { createUploadthing, type FileRouter } from "uploadthing/next";
 import { UploadThingError } from "uploadthing/server";
-import { string, z } from "zod";
+import { z } from "zod";
 
-import { addMemoryUpload, createMemory } from "@/db/queries/memories";
-import { checkAlbumExistsForUser } from "@/db/queries/albums";
+import { addMemoryUpload, canUploadToMemory } from "@/db/queries/memories";
 
 const f = createUploadthing();
 
@@ -15,37 +14,24 @@ export const fileRouter = {
        * For full list of options and defaults, see the File Route API reference
        * @see https://docs.uploadthing.com/file-routes#route-config
        */
-      maxFileCount: 5,
       maxFileSize: "4MB",
     },
-    video: {
-      maxFileSize: "8MB",
-      maxFileCount: 5,
-    },
+    // TODO: Allow for video
+    // video: {
+    //   maxFileSize: "16MB",
+    // },
   })
-    .input(
-      z.object({
-        albumId: string().uuid(),
-        caption: z.string().min(1),
-        date: z.string().transform((str) => new Date(str)),
-      }),
-    )
-    .middleware(async ({ input }) => {
+    .input(z.string().uuid())
+    .middleware(async ({ input: memoryId }) => {
       const user = await auth();
 
       if (!user) throw new UploadThingError("Unauthorized");
 
-      if (!checkAlbumExistsForUser(input.albumId, user.userId!)) {
+      if (!canUploadToMemory(memoryId, user.userId!)) {
         throw new UploadThingError("Cannot create memories for this album");
       }
 
-      const memory = await createMemory({
-        authorId: user.userId!,
-        albumId: input.albumId,
-        caption: input.caption,
-      });
-
-      return { memoryId: memory[0].id, albumId: input.albumId };
+      return { memoryId };
     })
     .onUploadError(async () => {
       // TODO: Handle error
@@ -54,10 +40,10 @@ export const fileRouter = {
       const { memoryId } = metadata;
 
       // TODO: Should set the type properly (image or video)
-      await addMemoryUpload(memoryId, file.ufsUrl);
+      const upload = await addMemoryUpload(memoryId, file.ufsUrl);
 
-      return {};
+      return { ...upload, createdAt: upload.createdAt.toISOString() };
     }),
 } satisfies FileRouter;
 
-export type OurFileRouter = typeof fileRouter;
+export type UploadRouter = typeof fileRouter;

@@ -16,6 +16,7 @@ import "mapbox-gl/dist/mapbox-gl.css";
 import { useEffect, useRef, useState } from "react";
 import { addToast } from "@heroui/react";
 import { MapPinnedIcon } from "lucide-react";
+import mapboxgl from "mapbox-gl";
 
 import MemoryMapMarker from "./memory-map-marker";
 
@@ -86,7 +87,7 @@ export default function MemoriesMapView({
 
   useEffect(() => {
     if (mapRef.current) {
-      const bounds = new window.mapboxgl.LngLatBounds();
+      const bounds = new mapboxgl.LngLatBounds();
 
       points.forEach((point) => {
         bounds.extend({ lat: point[0], lng: point[1] });

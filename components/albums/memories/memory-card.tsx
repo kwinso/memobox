@@ -6,13 +6,11 @@ import {
   CardHeader,
   Chip,
   Image,
-  Modal,
-  ModalContent,
   useDisclosure,
 } from "@heroui/react";
-import { ImageIcon } from "lucide-react";
+import { BoxIcon, ImageIcon } from "lucide-react";
 
-import ViewMemoryModal from "./view-memory-modal";
+import MemoryDrawer from "./memory-drawer";
 
 import { MemoryWithUploads } from "@/db/types";
 
@@ -28,7 +26,7 @@ export default function MemoryCard({ memory }: MemoryCardProps) {
       <Card
         isFooterBlurred
         isPressable
-        className="hover:scale-105 border-2 border-transparent hover:border-primary-200 transition-all box-content"
+        className="hover:scale-105 border-2 border-transparent hover:border-primary-200 transition-all box-content bg-default-100 h-52"
         disableRipple={true}
         radius="lg"
         onPress={onOpenChange}
@@ -45,24 +43,26 @@ export default function MemoryCard({ memory }: MemoryCardProps) {
             </div>
           </Chip>
         </CardHeader>
-        <Image
-          removeWrapper
-          alt={memory.caption}
-          className="z-0 w-full h-full object-cover max-h-52"
-          src={memory.uploads[0].uploadUrl}
-        />
+        {memory.uploads.length > 0 ? (
+          <Image
+            removeWrapper
+            alt={memory.caption}
+            className="z-0 w-full object-cover max-h-52"
+            src={memory.uploads[0].uploadUrl}
+          />
+        ) : (
+          <BoxIcon className="m-auto" size={32} />
+        )}
         <CardFooter className="flex-col items-start bg-black/10  before:bg-black/10 border-white/20 border-1 overflow-hidden py-1 absolute before:rounded-xl rounded-large bottom-1 w-[calc(100%_-_8px)] shadow-small ml-1 z-10">
           <p className="text-sm text-white/80">{memory.caption}</p>
         </CardFooter>
       </Card>
-      <Modal
+
+      <MemoryDrawer
+        initialState={{ memory, uploads: memory.uploads }}
         isOpen={isOpen}
-        scrollBehavior="inside"
-        size="3xl"
-        onOpenChange={onOpenChange}
-      >
-        <ModalContent>{() => <ViewMemoryModal memory={memory} />}</ModalContent>
-      </Modal>
+        onClose={onOpenChange}
+      />
     </>
   );
 }

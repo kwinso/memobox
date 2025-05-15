@@ -5,14 +5,12 @@ import {
   Chip,
   CardFooter,
   Image,
-  Modal,
-  ModalContent,
   useDisclosure,
 } from "@heroui/react";
 import { twMerge } from "tailwind-merge";
-import { ImageIcon } from "lucide-react";
+import { BoxIcon, ImageIcon } from "lucide-react";
 
-import ViewMemoryModal from "./view-memory-modal";
+import MemoryDrawer from "./memory-drawer";
 
 import { MemoryWithUploads } from "@/db/types";
 
@@ -44,16 +42,11 @@ export default function MemoryMapMarker({
         longitude={memory.longitude!}
         onClick={onOpenChange}
       >
-        <Modal
+        <MemoryDrawer
+          initialState={{ memory, uploads: memory.uploads }}
           isOpen={isOpen}
-          scrollBehavior="inside"
-          size="3xl"
-          onOpenChange={onOpenChange}
-        >
-          <ModalContent>
-            {() => <ViewMemoryModal memory={memory} />}
-          </ModalContent>
-        </Modal>
+          onClose={onOpenChange}
+        />
 
         <div className="w-4 h-4 rounded-full bg-primary-500 absolute" />
         <Card
@@ -76,11 +69,16 @@ export default function MemoryMapMarker({
               </div>
             </Chip>
           </CardHeader>
-          <Image
-            alt={memory.caption}
-            className="z-0 object-cover h-52 w-52"
-            src={memory.uploads[0].uploadUrl}
-          />
+          {memory.uploads.length > 0 ? (
+            <Image
+              removeWrapper
+              alt={memory.caption}
+              className="z-0 w-full object-cover max-h-52"
+              src={memory.uploads[0].uploadUrl}
+            />
+          ) : (
+            <BoxIcon className="m-auto" size={32} />
+          )}
           <CardFooter className="flex-col items-start bg-black/10  before:bg-black/10 border-white/20 border-1 overflow-hidden py-1 absolute before:rounded-xl rounded-large bottom-1 w-[calc(100%_-_8px)] shadow-small ml-1 z-10">
             <p className="text-sm text-white/80">{memory.caption}</p>
           </CardFooter>

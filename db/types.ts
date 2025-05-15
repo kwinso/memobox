@@ -10,5 +10,5 @@ export type AlbumWithMemories = Album & {
   memories: MemoryWithUploads[];
 };
 
-export type CreateMemory = typeof memories.$inferInsert;
+export type MemoryInsertData = typeof memories.$inferInsert;
 export type CreateMemoryUpload = typeof memoryUploads.$inferInsert;
