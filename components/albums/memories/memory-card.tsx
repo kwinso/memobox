@@ -47,7 +47,7 @@ export default function MemoryCard({ memory }: MemoryCardProps) {
           <Image
             removeWrapper
             alt={memory.caption}
-            className="z-0 w-full object-cover max-h-52"
+            className="z-0 w-full object-cover h-52"
             src={memory.uploads[0].uploadUrl}
           />
         ) : (

@@ -1,14 +1,11 @@
 "use client";
 import { Tabs, Tab } from "@heroui/react";
-import { createContext, useContext } from "react";
+import { useContext } from "react";
 
-export const MemoriesViewModeContext = createContext({
-  mode: "gallery",
-  setMode: (_: "gallery" | "map") => {},
-});
+import { AlbumMemoriesContext } from "./album-view";
 
 export default function MemoriesViewSelector() {
-  const { mode, setMode } = useContext(MemoriesViewModeContext);
+  const { mode, setMode } = useContext(AlbumMemoriesContext);
 
   return (
     <Tabs

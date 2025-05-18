@@ -1,20 +1,34 @@
 "use client";
-import { useEffect, useState } from "react";
+import { createContext, useEffect, useState } from "react";
 import { twMerge } from "tailwind-merge";
 
 import AlbumPageHeader from "./album-page-header";
 import MemoriesTimeline from "./memories/memories-timeline";
-import { MemoriesViewModeContext } from "./memories-view-selector";
 import MemoriesGalleryView from "./memories/memories-gallery-view";
 import MemoriesMapView from "./memories/memories-map-view";
 
-import { AlbumWithMemories, MemoryWithUploads } from "@/db/types";
+import { AlbumWithMemories, MemoryUpload, MemoryWithUploads } from "@/db/types";
 
 interface AlbumParams {
   album: AlbumWithMemories;
 }
 
+export const AlbumMemoriesContext = createContext<{
+  mode: "gallery" | "map";
+  setMode: (v: "gallery" | "map") => void;
+  memories: MemoryWithUploads[];
+  addMemory: (memory: MemoryWithUploads) => void;
+  addMemoryUploads: (memoryId: string, upload: MemoryUpload[]) => void;
+}>({
+  mode: "gallery",
+  setMode: (_: "gallery" | "map") => {},
+  memories: [],
+  addMemory: (_: MemoryWithUploads) => {},
+  addMemoryUploads: (_1: string, _2: MemoryUpload[]) => {},
+});
+
 export default function AlbumView({ album }: AlbumParams) {
+  const [memories, setMemories] = useState<MemoryWithUploads[]>(album.memories);
   const [viewMode, setViewMode] = useState<"gallery" | "map">("gallery");
   const [renderMaps, setRenderMaps] = useState(false);
   const [selectedMemory, setSelectedMemory] =
@@ -28,8 +42,23 @@ export default function AlbumView({ album }: AlbumParams) {
   }, [viewMode]);
 
   return (
-    <MemoriesViewModeContext.Provider
+    <AlbumMemoriesContext.Provider
       value={{
+        memories,
+        addMemory: (memory) => {
+          setMemories([memory, ...memories]);
+        },
+        addMemoryUploads: (memoryId, uploads) => {
+          const updatedMemories = memories.map((memory) => {
+            if (memory.id === memoryId) {
+              return { ...memory, uploads };
+            }
+
+            return memory;
+          });
+
+          setMemories(updatedMemories);
+        },
         mode: viewMode,
         setMode: (mode) => {
           setSelectedMemory(null);
@@ -48,10 +77,7 @@ export default function AlbumView({ album }: AlbumParams) {
                 viewMode === "gallery" && "opacity-100 visible",
               )}
             >
-              <MemoriesGalleryView
-                albumId={album.id}
-                memories={album.memories}
-              />
+              <MemoriesGalleryView albumId={album.id} />
             </div>
 
             <div
@@ -62,7 +88,6 @@ export default function AlbumView({ album }: AlbumParams) {
             >
               {renderMaps && (
                 <MemoriesMapView
-                  memories={album.memories}
                   selectedMemory={selectedMemory}
                   onMove={() => setSelectedMemory(null)}
                 />
@@ -70,7 +95,6 @@ export default function AlbumView({ album }: AlbumParams) {
             </div>
           </div>
           <MemoriesTimeline
-            memories={album.memories}
             selectedMemory={selectedMemory}
             onSelectMemory={(memory) =>
               viewMode == "map" && setSelectedMemory(memory)
@@ -78,6 +102,6 @@ export default function AlbumView({ album }: AlbumParams) {
           />
         </div>
       </>
-    </MemoriesViewModeContext.Provider>
+    </AlbumMemoriesContext.Provider>
   );
 }

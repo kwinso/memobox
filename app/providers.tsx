@@ -27,10 +27,7 @@ export function Providers({ children, themeProps }: ProvidersProps) {
   return (
     <HeroUIProvider navigate={router.push}>
       <NextThemesProvider {...themeProps}>
-        <ToastProvider
-          placement="top-center"
-          toastProps={{ classNames: { icon: "fill-none" } }}
-        />
+        <ToastProvider toastProps={{ classNames: { icon: "fill-none" } }} />
         {children}
       </NextThemesProvider>
     </HeroUIProvider>

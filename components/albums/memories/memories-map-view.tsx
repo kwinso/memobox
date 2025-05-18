@@ -13,18 +13,19 @@ import Map, {
 // If using with mapbox-gl v1:
 // import Map from 'react-map-gl/mapbox-legacy';
 import "mapbox-gl/dist/mapbox-gl.css";
-import { useEffect, useRef, useState } from "react";
+import { useContext, useEffect, useRef, useState } from "react";
 import { addToast } from "@heroui/react";
 import { MapPinnedIcon } from "lucide-react";
 import mapboxgl from "mapbox-gl";
 
+import { AlbumMemoriesContext } from "../album-view";
+
 import MemoryMapMarker from "./memory-map-marker";
 
-import { Memory, MemoryWithUploads } from "@/db/types";
+import { Memory } from "@/db/types";
 import { getCenterBetweenPoints } from "@/util/geo";
 
 interface MemoriesMapViewProps {
-  memories: MemoryWithUploads[];
   selectedMemory: Memory | null;
   onMove: () => void;
 }
@@ -67,10 +68,10 @@ const buildingsLayer: LayerProps = {
 };
 
 export default function MemoriesMapView({
-  memories,
   onMove: onMoveHandler,
   selectedMemory,
 }: MemoriesMapViewProps) {
+  const { memories } = useContext(AlbumMemoriesContext);
   const memoriesWithLocation = memories.filter(
     (memory) => memory.longitude && memory.latitude,
   );

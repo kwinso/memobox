@@ -1,7 +1,6 @@
 "use server";
 
 import { desc, eq } from "drizzle-orm";
-import { revalidatePath } from "next/cache";
 import { currentUser } from "@clerk/nextjs/server";
 import { z } from "zod";
 
@@ -37,11 +36,12 @@ export async function getAlbumById(
     where: (_, { eq, and }) =>
       and(eq(albums.id, safeId.data), eq(albums.authorId, user!.id)),
     with: {
-      // TODO: Fetching all memories is probably a bad idea
       memories: {
         orderBy: desc(memories.createdAt),
         with: {
-          uploads: true,
+          uploads: {
+            limit: 1, // just fetch the first one for the thumbnail
+          },
         },
       },
     },
@@ -53,9 +53,5 @@ export async function getAlbumById(
 export async function createAlbum(title: string, authorId: string) {
   const album = await db.insert(albums).values({ title, authorId }).returning();
 
-  // TODO: This will revalidate for all users, we need to revalidate for the author only
-  // Maybe prefix all fields with a `[userId]`?
-  revalidatePath("/");
-
-  return album[0].id;
+  return album[0];
 }

@@ -8,9 +8,11 @@ import {
   Input,
   Form,
 } from "@heroui/react";
-import { useState } from "react";
+import { FormEvent, useContext, useState } from "react";
 import { getLocalTimeZone, CalendarDate, today } from "@internationalized/date";
 import { useRouter } from "next/navigation";
+
+import { AlbumMemoriesContext } from "../album-view";
 
 import MemoryUploadDropzone from "./memory-upload-dropzone";
 import MemoryUploadCard from "./memory-upload-card";
@@ -38,6 +40,7 @@ export default function MemoryDrawer({
   initialState,
 }: MemoryDrawerProps) {
   const router = useRouter();
+  const { addMemory, addMemoryUploads } = useContext(AlbumMemoriesContext);
   const [uploads, setUploads] = useState<MemoryUpload[]>(initialState.uploads);
   const [isCreating, setIsCreating] = useState(false);
   const [memory, setMemory] = useState<memoryState>({
@@ -52,7 +55,8 @@ export default function MemoryDrawer({
         : today(getLocalTimeZone()),
   });
 
-  async function onSubmit() {
+  async function onSubmit(e: FormEvent<HTMLFormElement>) {
+    e.preventDefault();
     setIsCreating(true);
     const memoryData = await createMemory({
       ...memory,
@@ -60,6 +64,7 @@ export default function MemoryDrawer({
     });
 
     setMemory({ ...memoryData, date: dateToCalendarDate(memoryData.date) });
+    addMemory({ ...memoryData, uploads: [] });
   }
 
   return (
@@ -112,9 +117,10 @@ export default function MemoryDrawer({
                   <>
                     <MemoryUploadDropzone
                       memoryId={memory.id}
-                      onUploadComplete={(addedUploads) =>
-                        setUploads([...addedUploads, ...uploads])
-                      }
+                      onUploadComplete={(addedUploads) => {
+                        addMemoryUploads(memory.id!, addedUploads);
+                        setUploads([...addedUploads, ...uploads]);
+                      }}
                     />
                   </>
                 ) : (

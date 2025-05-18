@@ -15,8 +15,13 @@ import {
 import React from "react";
 
 import { createAlbum } from "@/db/queries/albums";
+import { Album } from "@/db/types";
 
-export default function CreateAlbumForm() {
+interface CreateAlbumFormProps {
+  onCreate: (album: Album) => void;
+}
+
+export default function CreateAlbumForm({ onCreate }: CreateAlbumFormProps) {
   const { isOpen, onOpen, onOpenChange, onClose } = useDisclosure();
   const [title, setTitle] = React.useState("");
   const [isInvalid, setIsInvalid] = React.useState(false);
@@ -29,9 +34,10 @@ export default function CreateAlbumForm() {
       return;
     }
 
-    await createAlbum(title, user!.id);
+    const album = await createAlbum(title, user!.id);
 
     onClose();
+    onCreate(album);
   }
 
   return (

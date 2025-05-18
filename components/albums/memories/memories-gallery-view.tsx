@@ -1,15 +1,19 @@
+import { useContext } from "react";
+
+import { AlbumMemoriesContext } from "../album-view";
+
 import MemoryCard from "./memory-card";
 import AddMemoryButton from "./add-memory-form";
 
 interface MemoriesGalleryViewProps {
   albumId: string;
-  memories: any[];
 }
 
 export default function MemoriesGalleryView({
   albumId,
-  memories,
 }: MemoriesGalleryViewProps) {
+  const { memories } = useContext(AlbumMemoriesContext);
+
   return (
     <div className="flex flex-col w-full gap-4">
       <div className="flex w-full gap-2 h-fit items-center justify-between">
