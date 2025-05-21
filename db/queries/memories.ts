@@ -8,15 +8,35 @@ import { db } from "..";
 import { albums, memories, memoryUploads } from "../schema";
 import { MemoryInsertData } from "../types";
 
+import { isParticipant } from "./albums";
+
 export async function canUploadToMemory(memoryId: string, userId: string) {
-  const memory = await db
-    .select({ id: memories.id })
+  const foundMemories = await db
+    .select({
+      id: memories.id,
+      albumId: memories.albumId,
+      isAlbumShared: albums.isShared,
+    })
     .from(memories)
     .leftJoin(albums, eq(memories.albumId, albums.id))
     .where(and(eq(memories.id, memoryId), eq(albums.authorId, userId!)))
     .execute();
 
-  return memory.length > 0;
+  if (foundMemories.length === 0) {
+    return false;
+  }
+
+  const memory = foundMemories[0];
+
+  if (memory.albumId != userId) {
+    if (memory.isAlbumShared && (await isParticipant(memory.albumId, userId))) {
+      return true;
+    }
+
+    return false;
+  }
+
+  return true;
 }
 
 export async function createMemory(data: Omit<MemoryInsertData, "authorId">) {
@@ -60,6 +80,12 @@ export async function addMemoryUpload(
   uploadUrl: string,
   isImage: boolean = true,
 ) {
+  const user = await auth();
+
+  if (!canUploadToMemory(memoryId, user.userId!)) {
+    throw new Error("You are not allowed to upload to this memory");
+  }
+
   const upload = await db
     .insert(memoryUploads)
     .values({

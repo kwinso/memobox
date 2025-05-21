@@ -1,16 +1,18 @@
 "use client";
 import { createContext, useEffect, useState } from "react";
 import { twMerge } from "tailwind-merge";
+import { useUser } from "@clerk/nextjs";
 
 import AlbumPageHeader from "./album-page-header";
 import MemoriesTimeline from "./memories/memories-timeline";
 import MemoriesGalleryView from "./memories/memories-gallery-view";
 import MemoriesMapView from "./memories/memories-map-view";
+import ParticipantsList from "./participants-list";
 
-import { AlbumWithMemories, MemoryUpload, MemoryWithUploads } from "@/db/types";
+import { AlbumDetails, MemoryUpload, MemoryWithUploads } from "@/db/types";
 
 interface AlbumParams {
-  album: AlbumWithMemories;
+  album: AlbumDetails;
 }
 
 export const AlbumMemoriesContext = createContext<{
@@ -28,6 +30,7 @@ export const AlbumMemoriesContext = createContext<{
 });
 
 export default function AlbumView({ album }: AlbumParams) {
+  const { user, isLoaded } = useUser();
   const [memories, setMemories] = useState<MemoryWithUploads[]>(album.memories);
   const [viewMode, setViewMode] = useState<"gallery" | "map">("gallery");
   const [renderMaps, setRenderMaps] = useState(false);
@@ -94,12 +97,22 @@ export default function AlbumView({ album }: AlbumParams) {
               )}
             </div>
           </div>
-          <MemoriesTimeline
-            selectedMemory={selectedMemory}
-            onSelectMemory={(memory) =>
-              viewMode == "map" && setSelectedMemory(memory)
-            }
-          />
+          <div className="flex w-full flex-col min-w-72 md:w-1/5 gap-4">
+            <ParticipantsList
+              albumId={album.id}
+              isAlbumShared={album.isShared}
+              participantsIds={album.participants.map((p) => p.userId)}
+              shouldShowControls={
+                isLoaded ? user?.id === album.authorId : false
+              }
+            />
+            <MemoriesTimeline
+              selectedMemory={selectedMemory}
+              onSelectMemory={(memory) =>
+                viewMode == "map" && setSelectedMemory(memory)
+              }
+            />
+          </div>
         </div>
       </>
     </AlbumMemoriesContext.Provider>

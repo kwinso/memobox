@@ -21,17 +21,24 @@ export const albums = pgTable("albums", {
 });
 
 export const albumRelations = relations(albums, ({ many }) => ({
-  // participants: many(participants),
+  participants: many(participants),
   memories: many(memories),
 }));
 
-// export const participants = pgTable("participants", {
-//   id: uuid().defaultRandom().primaryKey(),
-//   name: varchar({ length: 255 }).notNull(),
-//   albumId: uuid().notNull(),
-//   userId: clerkUserId.notNull(),
-//   createdAt: timestamp().notNull().defaultNow(),
-// });
+export const participants = pgTable("participants", {
+  id: uuid().defaultRandom().primaryKey(),
+  albumId: uuid().notNull(),
+  userId: clerkUserId.notNull(),
+  isBlocked: boolean().notNull().default(false),
+  createdAt: timestamp().notNull().defaultNow(),
+});
+
+export const participantsRelations = relations(participants, ({ one }) => ({
+  album: one(albums, {
+    fields: [participants.albumId],
+    references: [albums.id],
+  }),
+}));
 
 export const memories = pgTable("memories", {
   id: uuid().defaultRandom().primaryKey(),

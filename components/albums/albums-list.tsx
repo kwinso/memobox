@@ -4,24 +4,29 @@ import { useState } from "react";
 import CreateAlbumForm from "./create-album-form";
 import AlbumListItem from "./album-list-item";
 
-import { Album } from "@/db/types";
+import { AlbumWithParticipantInfo } from "@/db/queries/albums";
 
 interface AlbumsListProps {
-  initialAlbums: Album[];
+  initialAlbums: AlbumWithParticipantInfo[];
 }
 export default function AlbumsList({ initialAlbums }: AlbumsListProps) {
-  const [albums, setAlbums] = useState<Album[]>(initialAlbums);
+  const [albums, setAlbums] =
+    useState<AlbumWithParticipantInfo[]>(initialAlbums);
 
   return (
     <div className="flex w-full md:w-1/2 flex-col gap-4">
       <div className="flex w-full items-center justify-between h-6">
         <h5 className="text-xl font-bold">your albums</h5>
-        <CreateAlbumForm onCreate={(album) => setAlbums([album, ...albums])} />
+        <CreateAlbumForm
+          onCreate={(album) =>
+            setAlbums([{ album, participantId: null }, ...albums])
+          }
+        />
       </div>
       {albums.length > 0 ? (
         <div className="flex flex-col w-full gap-4">
-          {albums.map((album) => (
-            <AlbumListItem key={album.id} album={album} />
+          {albums.map((albumInfo) => (
+            <AlbumListItem key={albumInfo.album.id} album={albumInfo} />
           ))}
         </div>
       ) : (
